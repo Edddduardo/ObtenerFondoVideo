@@ -1,4 +1,5 @@
 import cv2
+import os
 from PIL import Image
 import numpy
 ALFA = 0.97
@@ -6,6 +7,7 @@ vidcap = cv2.VideoCapture('segs.mp4')
 frame_array=[]
 size=()
 height, width, layers=0,0,0
+
 def getFrame(sec):
     global size
     vidcap.set(cv2.CAP_PROP_POS_MSEC,sec*1000)
@@ -36,7 +38,7 @@ def convert_frames_to_video():
 
 def FuncionFondo():
     for i in range(len(frame_array)+1):
-        if i < len(frame_array)-1: 
+        if i < len(frame_array)-1:
             I0 = numpy.array(frame_array[i-1],dtype=numpy.uint8)
             Ii = numpy.array(frame_array[i],dtype=numpy.uint8)
             Fi = (ALFA*I0) + ((1-ALFA)*Ii)
@@ -44,11 +46,13 @@ def FuncionFondo():
                 img = Image.fromarray(Fi, 'RGB')
                 img.save('my.png')
                 img.show()
-            
-        
-
 
 if __name__ == "__main__": 
+    try:
+        if not os.path.exists('data'):
+            os.makedirs('data')
+    except OSError:
+        print ('Error: Creating directory of data')
     sec = 0
     frameRate = 0.2 #//it will capture image in each 0.2 second
     count=1
